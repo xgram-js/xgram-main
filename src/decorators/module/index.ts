@@ -38,6 +38,28 @@ export default function Module(metadata: ModuleMetadata) {
     };
 }
 
+export function getAvailableProvidersInModuleScope(
+    metadata: ModuleMetadata,
+    options?: { ignoreExports?: boolean }
+): Class[] {
+    const self = metadata.providers ?? [];
+    const fromImported = (metadata.imports ?? [])
+        .map(m => {
+            const mMetadata = Reflect.getOwnMetadata(MODULE_METADATA, m) as ModuleMetadata;
+            const available = getAvailableProvidersInModuleScope(mMetadata);
+            const exported = mMetadata.exports ?? [];
+            let result = new Set<Class>([...available]);
+            for (const exp of exported) {
+                if (!available.includes(exp))
+                    throw new Error(`Module ${exp.name} exported from ${m.name} is not available in that scope`);
+                result.add(exp);
+            }
+            return result.values().toArray();
+        })
+        .flat();
+    return [...self, ...fromImported];
+}
+
 export function isModuleClass(module: Class) {
     return Reflect.hasOwnMetadata(MODULE_METADATA, module);
 }
