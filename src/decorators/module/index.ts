@@ -1,5 +1,6 @@
 import { Class } from "@/types/class";
 import { isControllerClass } from "@/decorators/controller";
+import { isProviderClass } from "@/decorators/provider";
 
 export interface ModuleMetadata {
     imports?: Class[];
@@ -18,6 +19,13 @@ export default function Module(metadata: ModuleMetadata) {
             if (!isControllerClass(controller))
                 throw new Error(
                     `Controller class must be decorated with @Controller() (caused by ${controller.name} imported from ${target.name})`
+                );
+        });
+
+        metadata.providers?.forEach(provider => {
+            if (!isProviderClass(provider))
+                throw new Error(
+                    `Provider class must be decorated with @Provider() (caused by ${provider.name} imported from ${target.name})`
                 );
         });
 
