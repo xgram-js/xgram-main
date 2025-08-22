@@ -1,15 +1,17 @@
+import {Class} from "@/types/class";
+
 export interface ModuleMetadata {
-    imports?: any[];
-    exports?: any[];
-    providers?: any[];
+    imports?: Class[];
+    exports?: Class[];
+    providers?: Class[];
 }
 
 export default function Module(metadata: ModuleMetadata) {
-    return (target: any) => {
+    return (target: Class) => {
         Reflect.defineMetadata("module:metadata", metadata, target);
     };
 }
 
-export function isModuleClass(module: { new (...args: any[]): any }) {
+export function isModuleClass(module: Class) {
     return Reflect.hasOwnMetadata("module:metadata", module)
 }
