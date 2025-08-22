@@ -1,4 +1,4 @@
-import {Class} from "@/types/class";
+import { Class } from "@/types/class";
 
 export interface ModuleMetadata {
     imports?: Class[];
