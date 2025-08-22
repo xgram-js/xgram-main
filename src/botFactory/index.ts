@@ -8,7 +8,8 @@ export interface BotFactoryCreateOptions {
 
 export abstract class BotFactory {
     static async create(rootModule: Class, options: BotFactoryCreateOptions) {
-        if (!isModuleClass(rootModule)) throw new Error("Module class must be decorated with @Module()");
+        if (!isModuleClass(rootModule))
+            throw new Error(`Module class must be decorated with @Module() (caused by ${rootModule.name})`);
 
         return new Bot();
     }
