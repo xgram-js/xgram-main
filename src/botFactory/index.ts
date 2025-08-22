@@ -1,6 +1,7 @@
-import { isModuleClass } from "@/decorators/module";
+import { isModuleClass, MODULE_METADATA } from "@/decorators/module";
 import { Class } from "@/types/class";
 import Bot from "@/bot";
+import { InstanceStorage } from "@/instanceStorage";
 
 export interface BotFactoryCreateOptions {
     token: string;
@@ -11,6 +12,11 @@ export abstract class BotFactory {
         if (!isModuleClass(rootModule))
             throw new Error(`Module class must be decorated with @Module() (caused by ${rootModule.name})`);
 
-        return new Bot();
+        const rootModuleMetadata = Reflect.getOwnMetadata(MODULE_METADATA, rootModule);
+
+        const instanceStorage = new InstanceStorage();
+        instanceStorage.resolveForModule(rootModule);
+
+        return new Bot(new rootModule());
     }
 }
