@@ -1,0 +1,28 @@
+{
+  "name": "@xgram/main",
+  "version": "0.0.1",
+  "description": "",
+  "license": "LGPL-3.0-only",
+  "scripts": {
+    "style": "prettier . --write",
+    "build": "tsup"
+  },
+  "private": true,
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "prettier": "^3.6.2",
+    "prettier-plugin-unused-imports-configurable": "^1.15.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2"
+  }
+}
