@@ -16,7 +16,10 @@
     "require": "./dist/index.cjs"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "prettier-plugin-unused-imports-configurable": "^1.15.0",
     "tsup": "^8.5.0",
