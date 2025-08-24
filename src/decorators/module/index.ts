@@ -85,6 +85,18 @@ export function buildDependencyTree(
             );
     });
 
+    const detectLoop = (provider: Class, resolved: Class[]) => {
+        if (resolved.includes(provider)) {
+            const chain = [...resolved, provider].map(p => chalk.yellow(p.name)).join(" -> ");
+            throw new Error(`Detected dependency loop: ${chain}`);
+        }
+
+        const deps = (Reflect.getOwnMetadata("design:paramtypes", provider) ?? []) as Class[];
+        deps.forEach(dep => detectLoop(dep, [...resolved, provider]));
+    };
+
+    providersOwn.forEach(p => detectLoop(p, resolved));
+
     return {
         thisModule: moduleImportTree.thisModule,
         children: childrenTrees,
