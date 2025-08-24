@@ -39,6 +39,59 @@ export default function Module(metadata: ModuleMetadata) {
     };
 }
 
+export interface ModuleImportTreeNode {
+    thisModule: Class;
+    children: ModuleImportTreeNode[];
+}
+
+export function buildModuleImportTree(module: Class, resolved?: Class[]): ModuleImportTreeNode {
+    if (!isModuleClass(module))
+        throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(module.name)})`);
+    const metadata = Reflect.getOwnMetadata(MODULE_METADATA, module) as ModuleMetadata;
+    const children: ModuleImportTreeNode[] = [];
+    if ((resolved ?? []).includes(module)) throw new Error(`Import loop detected in ${chalk.cyan(module.name)}`);
+    (metadata.imports ?? []).forEach(m => {
+        children.push(buildModuleImportTree(m, [...(resolved ?? []), module]));
+    });
+    return {
+        thisModule: module,
+        children: children
+    };
+}
+
+export interface DependencyTreeNode {
+    thisModule: Class;
+    children: DependencyTreeNode[];
+    providersOwn: Class[];
+    providersImported: Class[];
+    providersInScope: Class[];
+    providersExported: Class[];
+}
+
+export function buildDependencyTree(moduleImportTree: ModuleImportTreeNode): DependencyTreeNode {
+    const metadata = Reflect.getOwnMetadata(MODULE_METADATA, moduleImportTree.thisModule) as ModuleMetadata;
+    const childrenTrees = moduleImportTree.children.map(child => buildDependencyTree(child));
+    const providersImported = childrenTrees.map(v => v.providersExported).flat();
+    const providersOwn = metadata.providers ?? [];
+    const providersInScope = [...providersOwn, ...providersImported];
+
+    (metadata.exports ?? []).forEach(exp => {
+        if (!providersInScope.includes(exp))
+            throw new Error(
+                `Provider ${chalk.yellow(exp.name)} exported from ${chalk.cyan(moduleImportTree.thisModule.name)} is not available in that scope`
+            );
+    });
+
+    return {
+        thisModule: moduleImportTree.thisModule,
+        children: childrenTrees,
+        providersInScope: providersInScope,
+        providersOwn: providersOwn,
+        providersImported: providersImported,
+        providersExported: metadata.exports ?? []
+    };
+}
+
 export function getAvailableProvidersInModuleScope(
     metadata: ModuleMetadata,
     options?: { ignoreExports?: boolean }
