@@ -8,7 +8,6 @@
     "prebuild": "npm run style",
     "build": "tsup"
   },
-  "private": true,
   "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
