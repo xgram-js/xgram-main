@@ -27,7 +27,8 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "typescript-telegram-bot-api": "^0.8.0"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx,mjs,cjs,mts,cts,json,md}": "prettier --write"
