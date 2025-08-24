@@ -1,6 +1,7 @@
 import { Class } from "@/types/class";
 import { isControllerClass } from "@/decorators/controller";
 import { isProviderClass } from "@/decorators/provider";
+import chalk from "chalk";
 
 export interface ModuleMetadata {
     imports?: Class[];
@@ -18,21 +19,21 @@ export default function Module(metadata: ModuleMetadata) {
         metadata.controller?.forEach(controller => {
             if (!isControllerClass(controller))
                 throw new Error(
-                    `Controller class must be decorated with @Controller() (caused by ${controller.name} imported from ${target.name})`
+                    `Controller class must be decorated with @Controller() (caused by ${chalk.green(controller.name)} imported from ${chalk.cyan(target.name)})`
                 );
         });
 
         metadata.providers?.forEach(provider => {
             if (!isProviderClass(provider))
                 throw new Error(
-                    `Provider class must be decorated with @Provider() (caused by ${provider.name} imported from ${target.name})`
+                    `Provider class must be decorated with @Provider() (caused by ${chalk.yellow(provider.name)} imported from ${chalk.cyan(target.name)})`
                 );
         });
 
         metadata.imports?.forEach(module => {
             if (!isModuleClass(module))
                 throw new Error(
-                    `Module class must be decorated with @Module() (caused by ${module.name} imported from ${target.name})`
+                    `Module class must be decorated with @Module() (caused by ${chalk.cyan(module.name)} imported from ${chalk.cyan(target.name)})`
                 );
         });
     };
