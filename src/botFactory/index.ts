@@ -17,6 +17,6 @@ export abstract class BotFactory {
         const instanceStorage = new InstanceStorage();
         instanceStorage.resolveForModule(rootModule);
 
-        return new Bot(new rootModule());
+        return new Bot(new rootModule(), options.token);
     }
 }
