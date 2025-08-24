@@ -44,14 +44,14 @@ export interface ModuleImportTreeNode {
     children: ModuleImportTreeNode[];
 }
 
-export function buildModuleImportTree(module: Class, resolved?: Class[]): ModuleImportTreeNode {
+export function buildModuleImportTree(module: Class, resolved: Class[] = []): ModuleImportTreeNode {
     if (!isModuleClass(module))
         throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(module.name)})`);
     const metadata = Reflect.getOwnMetadata(MODULE_METADATA, module) as ModuleMetadata;
     const children: ModuleImportTreeNode[] = [];
-    if ((resolved ?? []).includes(module)) throw new Error(`Import loop detected in ${chalk.cyan(module.name)}`);
+    if (resolved.includes(module)) throw new Error(`Import loop detected in ${chalk.cyan(module.name)}`);
     (metadata.imports ?? []).forEach(m => {
-        children.push(buildModuleImportTree(m, [...(resolved ?? []), module]));
+        children.push(buildModuleImportTree(m, [...resolved, module]));
     });
     return {
         thisModule: module,
@@ -68,7 +68,10 @@ export interface DependencyTreeNode {
     providersExported: Class[];
 }
 
-export function buildDependencyTree(moduleImportTree: ModuleImportTreeNode): DependencyTreeNode {
+export function buildDependencyTree(
+    moduleImportTree: ModuleImportTreeNode,
+    resolved: Class[] = []
+): DependencyTreeNode {
     const metadata = Reflect.getOwnMetadata(MODULE_METADATA, moduleImportTree.thisModule) as ModuleMetadata;
     const childrenTrees = moduleImportTree.children.map(child => buildDependencyTree(child));
     const providersImported = childrenTrees.map(v => v.providersExported).flat();

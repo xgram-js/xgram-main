@@ -4,7 +4,6 @@ import Bot from "@/bot";
 import { InstanceStorage } from "@/instanceStorage";
 import chalk from "chalk";
 import { dependencyTreeToString } from "@/utils";
-import * as util from "node:util";
 
 export interface BotFactoryCreateOptions {
     token: string;
@@ -20,11 +19,10 @@ export abstract class BotFactory {
         console.log(`Building dependency tree for module ${chalk.cyan(rootModule.name)}`);
         const moduleImportTree = buildModuleImportTree(rootModule);
         const dependencyTree = buildDependencyTree(moduleImportTree);
-        console.log(util.inspect(dependencyTree, { depth: null, colors: true }));
         console.log(dependencyTreeToString(dependencyTree));
 
         const instanceStorage = new InstanceStorage();
-        instanceStorage.resolveForModule(rootModule);
+        instanceStorage.resolveForModule(rootModule, dependencyTree);
 
         return new Bot(new rootModule(), options.token);
     }
