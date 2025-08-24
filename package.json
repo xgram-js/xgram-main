@@ -5,6 +5,7 @@
   "license": "LGPL-3.0-only",
   "scripts": {
     "style": "prettier . --write",
+    "prebuild": "npm run style",
     "build": "tsup"
   },
   "private": true,
@@ -16,13 +17,24 @@
     "require": "./dist/index.cjs"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/archy": "^0.0.36",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
     "prettier-plugin-unused-imports-configurable": "^1.15.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "reflect-metadata": "^0.2.2"
+    "archy": "^1.0.0",
+    "chalk": "^5.6.0",
+    "reflect-metadata": "^0.2.2",
+    "typescript-telegram-bot-api": "^0.8.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,mjs,cjs,mts,cts,json,md}": "prettier --write"
   }
 }
