@@ -2,8 +2,11 @@ import { Class } from "@/types/class";
 import { DependencyTreeNode, isModuleClass } from "@/decorators/module";
 import chalk from "chalk";
 import { isProviderClass } from "@/decorators/provider";
+import { LoggerLike } from "@/logger";
 
 export class InstanceStorage {
+    constructor(private readonly logger: LoggerLike) {}
+
     instances: Map<Class, Map<Class, any>> = new Map();
 
     public getInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): any {
@@ -44,7 +47,8 @@ export class InstanceStorage {
             providerDefinitorModule = res;
         }
 
-        console.log(
+        this.logger.log(
+            "InstanceStorage",
             `Getting instance of ${chalk.yellow(of.name)} from module ${chalk.cyan(scope.name)}. Definitor: ${chalk.cyan(providerDefinitorModule.thisModule.name)}`
         );
 
