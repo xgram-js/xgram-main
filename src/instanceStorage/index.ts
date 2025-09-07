@@ -53,6 +53,11 @@ export class InstanceStorage {
             `Getting instance of ${chalk.yellow(of.name)} from module ${chalk.cyan(scope.name)}. Definitor: ${chalk.cyan(providerDefinitorModule.thisModule.name)}`
         );
 
+        if (this.instances.has(providerDefinitorModule.thisModule)) {
+            if (this.instances.get(providerDefinitorModule.thisModule)!.has(of))
+                return this.instances.get(providerDefinitorModule.thisModule)!.get(of)!;
+        }
+
         const deps: Class[] = Reflect.getOwnMetadata("design:paramtypes", of) ?? [];
         const resolvedDeps = deps.map(dep => this.getProviderInstance(dep, dependencyTree, resolved));
 
