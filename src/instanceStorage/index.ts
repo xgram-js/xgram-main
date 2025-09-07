@@ -3,13 +3,14 @@ import { DependencyTreeNode, isModuleClass } from "@/decorators/module";
 import chalk from "chalk";
 import { isProviderClass } from "@/decorators/provider";
 import { LoggerLike } from "@/logger";
+import { isControllerClass } from "@/decorators/controller";
 
 export class InstanceStorage {
     constructor(private readonly logger: LoggerLike) {}
 
     instances: Map<Class, Map<Class, any>> = new Map();
 
-    public getInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): any {
+    public getProviderInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): any {
         const scope = dependencyTree.thisModule;
         if (!isModuleClass(scope))
             throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(scope.name)})`);
@@ -53,13 +54,49 @@ export class InstanceStorage {
         );
 
         const deps: Class[] = Reflect.getOwnMetadata("design:paramtypes", of) ?? [];
-        const resolvedDeps = deps.map(dep => this.getInstance(dep, dependencyTree, resolved));
+        const resolvedDeps = deps.map(dep => this.getProviderInstance(dep, dependencyTree, resolved));
 
         const instance = new of(...resolvedDeps);
 
         if (!this.instances.has(providerDefinitorModule.thisModule))
             this.instances.set(providerDefinitorModule.thisModule, new Map());
         this.instances.get(providerDefinitorModule.thisModule)!.set(of, instance);
+
+        if (!this.instances.has(scope)) this.instances.set(scope, new Map());
+        this.instances.get(scope)!.set(of, instance);
+
+        return instance;
+    }
+
+    public getControllerInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): any {
+        const scope = dependencyTree.thisModule;
+        if (!isModuleClass(scope))
+            throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(scope.name)})`);
+        if (!isControllerClass(of))
+            throw new Error(
+                `Controller class must be decorated with @Controller() (caused by ${chalk.green(of.name)} imported from ${chalk.cyan(scope.name)})`
+            );
+
+        const moduleScope: Map<Class, any> = this.instances.get(scope) ?? new Map();
+        if (moduleScope.has(of)) {
+            return moduleScope.get(of);
+        }
+
+        if (resolved.includes(of)) {
+            const chain = [...resolved, of].map(p => chalk.yellow(p.name)).join(" -> ");
+            throw new Error(`Detected dependency loop: ${chain}`);
+        }
+        resolved.push(of);
+
+        this.logger.log(
+            "InstanceStorage",
+            `Getting instance of ${chalk.green(of.name)} from module ${chalk.cyan(scope.name)}`
+        );
+
+        const deps: Class[] = Reflect.getOwnMetadata("design:paramtypes", of) ?? [];
+        const resolvedDeps = deps.map(dep => this.getProviderInstance(dep, dependencyTree, resolved));
+
+        const instance = new of(...resolvedDeps);
 
         if (!this.instances.has(scope)) this.instances.set(scope, new Map());
         this.instances.get(scope)!.set(of, instance);
@@ -74,7 +111,8 @@ export class InstanceStorage {
             throw new Error(
                 `resolveForModule() argument dependencyTree has unexpected root node (expected ${chalk.cyan(module.name)}, found ${chalk.cyan(dependencyTree.thisModule.name)})`
             );
-        dependencyTree.providersInScope.forEach(provider => this.getInstance(provider, dependencyTree));
+        dependencyTree.providersInScope.forEach(provider => this.getProviderInstance(provider, dependencyTree));
+        dependencyTree.controllers.forEach(controller => this.getControllerInstance(controller, dependencyTree));
         dependencyTree.children.forEach(child => this.resolveForModule(child.thisModule, child));
     }
 }
