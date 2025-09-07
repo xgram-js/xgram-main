@@ -3,7 +3,7 @@ import { TelegramBot } from "typescript-telegram-bot-api";
 import { LoggerLike } from "@/logger";
 
 export default class Bot {
-    constructor(
+    public constructor(
         rootModule: any,
         private readonly token: string,
         private readonly logger: LoggerLike
@@ -15,12 +15,12 @@ export default class Bot {
 
     private apiInterface: TelegramBot;
 
-    async run() {
+    public async run() {
         this.logger.log("Bot", "Starting bot...");
         await this.apiInterface.startPolling();
     }
 
-    async stop() {
+    public async stop() {
         await this.apiInterface.stopPolling();
     }
 }

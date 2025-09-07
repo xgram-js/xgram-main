@@ -12,7 +12,7 @@ export interface BotFactoryCreateOptions {
 }
 
 export abstract class BotFactory {
-    static async create(rootModule: Class, options: BotFactoryCreateOptions) {
+    public static async create(rootModule: Class, options: BotFactoryCreateOptions) {
         if (!isModuleClass(rootModule))
             throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(rootModule.name)})`);
 
