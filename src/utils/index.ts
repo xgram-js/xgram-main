@@ -2,6 +2,7 @@ import { DependencyTreeNode, ModuleImportTreeNode } from "@/decorators/module";
 import archy from "archy";
 import chalk from "chalk";
 import { Class } from "@/types/class";
+import { isProviderClass } from "@/decorators/provider";
 
 export function moduleImportTreeToString(tree: ModuleImportTreeNode): string {
     const fn = (tree: ModuleImportTreeNode): archy.Data => {
@@ -13,20 +14,12 @@ export function moduleImportTreeToString(tree: ModuleImportTreeNode): string {
     return archy(fn(tree));
 }
 
-export function providerDependenciesToString(provider: Class): archy.Data {
-    const deps = Reflect.getOwnMetadata("design:paramtypes", provider) ?? [];
-    const depsFormatted = deps.map(providerDependenciesToString);
+export function moduleMemberToString(member: Class): archy.Data {
+    const deps = Reflect.getOwnMetadata("design:paramtypes", member) ?? [];
+    const depsFormatted = deps.map(moduleMemberToString);
+    const color = isProviderClass(member) ? chalk.yellow : chalk.green;
     return {
-        label: chalk.yellow(provider.name),
-        nodes: depsFormatted
-    };
-}
-
-export function controllerDependenciesToString(controller: Class): archy.Data {
-    const deps = Reflect.getOwnMetadata("design:paramtypes", controller) ?? [];
-    const depsFormatted = deps.map(controllerDependenciesToString);
-    return {
-        label: chalk.green(controller.name),
+        label: color(member.name),
         nodes: depsFormatted
     };
 }
@@ -36,8 +29,8 @@ export function dependencyTreeToString(tree: DependencyTreeNode): string {
         return {
             label: chalk.cyan(tree.thisModule.name),
             nodes: [
-                ...tree.controllers.map(controllerDependenciesToString),
-                ...tree.providersOwn.map(providerDependenciesToString),
+                ...tree.controllers.map(moduleMemberToString),
+                ...tree.providersOwn.map(moduleMemberToString),
                 ...tree.children.map(fn)
             ]
         };
