@@ -1,15 +1,17 @@
 import { Class } from "@/types/class";
 import { Message } from "typescript-telegram-bot-api";
 import { BaseContext } from "@/types/context";
-import { Function } from "@/types/function";
 
 export const CONTROLLER_COMMANDS = Symbol("controller:commands");
-export type ControllerCommandsMetadata = { trigger: string | RegExp; fn: Function };
+export type ControllerCommandsMetadata = {
+    trigger: string | RegExp;
+    fn: (ctx: CommandContext) => void | Promise<void>;
+};
 
 export default function Command(trigger: string | RegExp): MethodDecorator {
     return function (target, propertyKey, descriptor) {
         const cls = target.constructor as Class;
-        const fn = descriptor.value as Function;
+        const fn = descriptor.value as (...args: any[]) => any;
 
         const currentCommands =
             (Reflect.getOwnMetadata(CONTROLLER_COMMANDS, cls) as ControllerCommandsMetadata[]) ?? [];
