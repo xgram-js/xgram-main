@@ -16,7 +16,7 @@ export abstract class BotFactory {
         if (!isModuleClass(rootModule))
             throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(rootModule.name)})`);
 
-        const logger = options.logger ?? new ConsoleLogger({ prefix: "Bot" });
+        const logger = options.logger ?? new ConsoleLogger({ prefix: "Main" });
 
         logger.log("BotFactory", `Building dependency tree for module ${chalk.cyan(rootModule.name)}`);
         const moduleImportTree = buildModuleImportTree(rootModule);

@@ -48,11 +48,6 @@ export class InstanceStorage {
             providerDefinitorModule = res;
         }
 
-        this.logger.log(
-            "InstanceStorage",
-            `Getting instance of ${chalk.yellow(of.name)} from module ${chalk.cyan(scope.name)}. Definitor: ${chalk.cyan(providerDefinitorModule.thisModule.name)}`
-        );
-
         if (this.instances.has(providerDefinitorModule.thisModule)) {
             if (this.instances.get(providerDefinitorModule.thisModule)!.has(of))
                 return this.instances.get(providerDefinitorModule.thisModule)!.get(of)!;
@@ -62,6 +57,10 @@ export class InstanceStorage {
         const resolvedDeps = deps.map(dep => this.getProviderInstance(dep, dependencyTree, resolved));
 
         const instance = new of(...resolvedDeps);
+        this.logger.log(
+            "InstanceStorage",
+            `Initialised ${chalk.yellow(of.name)}. Definitor: ${chalk.cyan(providerDefinitorModule.thisModule.name)}`
+        );
 
         if (!this.instances.has(providerDefinitorModule.thisModule))
             this.instances.set(providerDefinitorModule.thisModule, new Map());
@@ -93,15 +92,11 @@ export class InstanceStorage {
         }
         resolved.push(of);
 
-        this.logger.log(
-            "InstanceStorage",
-            `Getting instance of ${chalk.green(of.name)} from module ${chalk.cyan(scope.name)}`
-        );
-
         const deps: Class[] = Reflect.getOwnMetadata("design:paramtypes", of) ?? [];
         const resolvedDeps = deps.map(dep => this.getProviderInstance(dep, dependencyTree, resolved));
 
         const instance = new of(...resolvedDeps);
+        this.logger.log("InstanceStorage", `Initialised ${chalk.green(of.name)}. Definitor: ${chalk.cyan(scope.name)}`);
 
         if (!this.instances.has(scope)) this.instances.set(scope, new Map());
         this.instances.get(scope)!.set(of, instance);
