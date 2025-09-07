@@ -1,12 +1,14 @@
-import { buildDependencyTree, buildModuleImportTree, isModuleClass, MODULE_METADATA } from "@/decorators/module";
+import { buildDependencyTree, buildModuleImportTree, isModuleClass } from "@/decorators/module";
 import { Class } from "@/types/class";
 import Bot from "@/bot";
 import { InstanceStorage } from "@/instanceStorage";
 import chalk from "chalk";
 import { dependencyTreeToString } from "@/utils";
+import { ConsoleLogger, LoggerLike } from "@/logger";
 
 export interface BotFactoryCreateOptions {
     token: string;
+    logger?: LoggerLike;
 }
 
 export abstract class BotFactory {
@@ -14,16 +16,16 @@ export abstract class BotFactory {
         if (!isModuleClass(rootModule))
             throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(rootModule.name)})`);
 
-        const rootModuleMetadata = Reflect.getOwnMetadata(MODULE_METADATA, rootModule);
+        const logger = options.logger ?? new ConsoleLogger({ prefix: "Bot" });
 
-        console.log(`Building dependency tree for module ${chalk.cyan(rootModule.name)}`);
+        logger.log("BotFactory", `Building dependency tree for module ${chalk.cyan(rootModule.name)}`);
         const moduleImportTree = buildModuleImportTree(rootModule);
         const dependencyTree = buildDependencyTree(moduleImportTree);
-        console.log(dependencyTreeToString(dependencyTree));
+        logger.log("BotFactory", `\n` + dependencyTreeToString(dependencyTree));
 
-        const instanceStorage = new InstanceStorage();
+        const instanceStorage = new InstanceStorage(logger);
         instanceStorage.resolveForModule(rootModule, dependencyTree);
 
-        return new Bot(new rootModule(), options.token);
+        return new Bot(new rootModule(), options.token, options.logger ?? logger);
     }
 }

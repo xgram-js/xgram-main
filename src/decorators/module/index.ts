@@ -6,7 +6,7 @@ import chalk from "chalk";
 export interface ModuleMetadata {
     imports?: Class[];
     exports?: Class[];
-    controller?: Class[];
+    controllers?: Class[];
     providers?: Class[];
 }
 
@@ -16,7 +16,7 @@ export default function Module(metadata: ModuleMetadata) {
     return (target: Class) => {
         Reflect.defineMetadata(MODULE_METADATA, metadata, target);
 
-        metadata.controller?.forEach(controller => {
+        metadata.controllers?.forEach(controller => {
             if (!isControllerClass(controller))
                 throw new Error(
                     `Controller class must be decorated with @Controller() (caused by ${chalk.green(controller.name)} imported from ${chalk.cyan(target.name)})`
@@ -66,6 +66,7 @@ export interface DependencyTreeNode {
     providersImported: Class[];
     providersInScope: Class[];
     providersExported: Class[];
+    controllers: Class[];
 }
 
 export function buildDependencyTree(
@@ -77,6 +78,7 @@ export function buildDependencyTree(
     const providersImported = childrenTrees.map(v => v.providersExported).flat();
     const providersOwn = metadata.providers ?? [];
     const providersInScope = [...providersOwn, ...providersImported];
+    const controllers = metadata.controllers ?? [];
 
     (metadata.exports ?? []).forEach(exp => {
         if (!providersInScope.includes(exp))
@@ -103,7 +105,8 @@ export function buildDependencyTree(
         providersInScope: providersInScope,
         providersOwn: providersOwn,
         providersImported: providersImported,
-        providersExported: metadata.exports ?? []
+        providersExported: metadata.exports ?? [],
+        controllers: controllers
     };
 }
 
