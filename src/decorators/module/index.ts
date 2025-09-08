@@ -1,5 +1,5 @@
 import { Class } from "@/types/class";
-import { isControllerClass } from "@/decorators/controller";
+import { CONTROLLER_MODULE_DEFINITOR, isControllerClass } from "@/decorators/controller";
 import { isProviderClass } from "@/decorators/provider";
 import chalk from "chalk";
 
@@ -21,8 +21,14 @@ export default function Module(metadata: ModuleMetadata) {
                 throw new Error(
                     `Controller class must be decorated with @Controller() (caused by ${chalk.green(controller.name)} imported from ${chalk.cyan(target.name)})`
                 );
+            if (Reflect.hasOwnMetadata(CONTROLLER_MODULE_DEFINITOR, controller))
+                throw new Error(
+                    `Controller ${chalk.green(controller.name)} defined multiply times:
+                    (${chalk.cyan(target.name)},
+                    ${chalk.cyan((Reflect.getOwnMetadata(CONTROLLER_MODULE_DEFINITOR, controller) as Class).name)})`
+                );
+            else Reflect.defineMetadata(CONTROLLER_MODULE_DEFINITOR, target, controller);
         });
-
         metadata.providers?.forEach(provider => {
             if (!isProviderClass(provider))
                 throw new Error(

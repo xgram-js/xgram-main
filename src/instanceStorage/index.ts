@@ -6,10 +6,11 @@ import { LoggerLike } from "@/logger";
 import { isControllerClass } from "@/decorators/controller";
 
 export class InstanceStorage {
-    constructor(private readonly logger: LoggerLike) {}
+    public constructor(private readonly logger: LoggerLike) {}
 
-    instances: Map<Class, Map<Class, any>> = new Map();
+    private instances: Map<Class, Map<Class, any>> = new Map();
 
+    // TODO: merge getProviderInstance and getControllerInstance into one method or optimise getControllerInstance
     public getProviderInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): any {
         const scope = dependencyTree.thisModule;
         if (!isModuleClass(scope))

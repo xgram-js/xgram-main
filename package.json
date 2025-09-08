@@ -1,10 +1,11 @@
 {
   "name": "@xgram/main",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "license": "LGPL-3.0-only",
   "scripts": {
     "style": "prettier . --write",
+    "lint": "eslint . --fix",
     "prebuild": "npm run style",
     "build": "tsup"
   },
@@ -18,14 +19,20 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.35.0",
+    "@eslint/markdown": "^7.2.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/archy": "^0.0.36",
+    "eslint": "^9.35.0",
+    "globals": "^16.3.0",
     "husky": "^9.1.7",
+    "jiti": "^2.5.1",
     "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
     "prettier-plugin-unused-imports-configurable": "^1.15.0",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.42.0"
   },
   "dependencies": {
     "archy": "^1.0.0",

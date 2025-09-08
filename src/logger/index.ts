@@ -19,7 +19,7 @@ export interface ConsoleLoggerOptions {
 }
 
 export class ConsoleLogger implements LoggerLike {
-    constructor(private readonly options: ConsoleLoggerOptions) {}
+    public constructor(private readonly options: ConsoleLoggerOptions) {}
 
     protected doLog(level: LogLevel, context: string, ...args: any[]) {
         const func =
@@ -41,8 +41,8 @@ export class ConsoleLogger implements LoggerLike {
         return `${chalk.green(`[${hours}:${minutes}:${seconds}]`)} ${chalk.green(`[${this.options.prefix}]`)} ${chalk.yellow(`[${context}]`)}`;
     }
 
-    debug = (context: string, ...args: any[]) => this.doLog(LogLevel.DEBUG, context, ...args);
-    log = (context: string, ...args: any[]) => this.doLog(LogLevel.INFO, context, ...args);
-    warn = (context: string, ...args: any[]) => this.doLog(LogLevel.WARN, context, ...args);
-    error = (context: string, ...args: any[]) => this.doLog(LogLevel.ERROR, context, ...args);
+    public debug = (context: string, ...args: any[]) => this.doLog(LogLevel.DEBUG, context, ...args);
+    public log = (context: string, ...args: any[]) => this.doLog(LogLevel.INFO, context, ...args);
+    public warn = (context: string, ...args: any[]) => this.doLog(LogLevel.WARN, context, ...args);
+    public error = (context: string, ...args: any[]) => this.doLog(LogLevel.ERROR, context, ...args);
 }

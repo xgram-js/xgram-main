@@ -4,6 +4,7 @@ import { CONTROLLER_COMMANDS, ControllerCommandsMetadata } from "@/decorators/co
 export interface ControllerMetadata {}
 
 export const CONTROLLER_METADATA = Symbol("controller:metadata");
+export const CONTROLLER_MODULE_DEFINITOR = Symbol("controller:module_definitor");
 
 export default function Controller(metadata?: ControllerMetadata) {
     return (target: Class) => {
