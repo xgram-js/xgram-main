@@ -5,6 +5,7 @@ import { InstanceStorage } from "@/instanceStorage";
 import chalk from "chalk";
 import { dependencyTreeToString } from "@/utils";
 import { ConsoleLogger, LoggerLike } from "@/logger";
+import { CommandsMapper } from "@/commandsMapper";
 
 export interface BotFactoryCreateOptions {
     token: string;
@@ -26,6 +27,11 @@ export abstract class BotFactory {
         const instanceStorage = new InstanceStorage(logger);
         instanceStorage.resolveForModule(rootModule, dependencyTree);
 
-        return new Bot(new rootModule(), options.token, options.logger ?? logger);
+        const commandsMapper = new CommandsMapper(logger);
+        commandsMapper.mapModule(dependencyTree);
+
+        return new Bot(new rootModule(), options.token, options.logger ?? logger, {
+            onCommand: (bot, message) => commandsMapper.handleMessage(bot, message)
+        });
     }
 }
