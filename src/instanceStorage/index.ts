@@ -10,6 +10,7 @@ export class InstanceStorage {
 
     private instances: Map<Class, Map<Class, any>> = new Map();
 
+    // TODO: merge getProviderInstance and getControllerInstance into one method or optimise getControllerInstance
     public getProviderInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): any {
         const scope = dependencyTree.thisModule;
         if (!isModuleClass(scope))
