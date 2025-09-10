@@ -6,3 +6,4 @@ export { default as Provider } from "@/decorators/provider";
 export { default as Command } from "@/decorators/controller/command";
 export { CommandContext } from "@/decorators/controller/command";
 export { ConsoleLogger, ConsoleLoggerOptions, LoggerLike, LogLevel } from "@/logger";
+export { ReplyWithError } from "@/errors";

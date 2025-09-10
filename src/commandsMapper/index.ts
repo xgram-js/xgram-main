@@ -10,6 +10,7 @@ import {
 import { LoggerLike } from "@/logger";
 import chalk from "chalk";
 import { Class } from "@/types/class";
+import { ReplyWithError } from "@/errors";
 
 export type CommandDeclaration = {
     handler: (ctx: CommandContext) => void | Promise<void>;
@@ -60,7 +61,7 @@ export class CommandsMapper {
     }
 
     public async handleCommand(bot: Bot, message: Message, command: CommandDeclaration) {
-        await command.handler({
+        const ctx: CommandContext = {
             bot: bot,
             message: message,
             reply: async text =>
@@ -72,7 +73,13 @@ export class CommandsMapper {
             menuEntryPoint: function (menu: Class, entryPoint: string, ...args: any[]): void {
                 throw new Error("Function not implemented.");
             }
-        });
+        };
+        try {
+            await command.handler(ctx);
+        } catch (err) {
+            if (err instanceof ReplyWithError) await ctx.reply(err.text);
+            else throw err;
+        }
     }
 
     public mapModule(module: DependencyTreeNode) {
