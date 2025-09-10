@@ -137,6 +137,7 @@ src
 .npmignore
 .prettierrc
 commitlint.config.ts
+eslint.config.ts
 tsconfig.json
 tsup.config.ts
 .idea
