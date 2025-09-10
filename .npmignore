@@ -141,3 +141,4 @@ tsconfig.json
 tsup.config.ts
 .idea
 .husky
+.github
