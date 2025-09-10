@@ -45,7 +45,7 @@ export class InstanceStorage {
                 return null;
             };
             const res = findInChildren(dependencyTree);
-            if (!res) throw new Error(`Provider ${of.name} is not available in scope ${scope.name}`);
+            if (!res) throw new Error(`Provider ${of.name} is not available in scope of ${scope.name}`);
             providerDefinitorModule = res;
         }
 
