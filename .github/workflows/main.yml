@@ -1,7 +1,7 @@
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 name: all the stuff
 
 jobs:
