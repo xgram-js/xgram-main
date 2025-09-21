@@ -9,6 +9,8 @@
     "skipLibCheck": true,
     "noImplicitOverride": true,
     "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@/*": ["src/*"]
     }
