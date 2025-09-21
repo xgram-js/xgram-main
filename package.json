@@ -39,6 +39,7 @@
     "chalk": "^5.6.0",
     "reflect-metadata": "^0.2.2",
     "typescript-telegram-bot-api": "^0.8.0"
+    "@xgram/di": "^0.0.3"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx,mjs,cjs,mts,cts,json,md}": "prettier --write"
