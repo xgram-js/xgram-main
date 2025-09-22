@@ -7,8 +7,7 @@
     "style": "prettier . --write",
     "lint": "eslint . --fix",
     "prebuild": "npm run style",
-    "build": "tsup",
-    "postinstall": "husky"
+    "build": "tsup"
   },
   "types": "./dist/index.d.ts",
   "type": "module",
