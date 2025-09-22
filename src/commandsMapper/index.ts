@@ -11,10 +11,15 @@ import { LoggerLike } from "@/logger";
 import chalk from "chalk";
 import { Class } from "@/types/class";
 import { ReplyWithError } from "@/errors";
+import { isControllerClass } from "@/decorators/controller";
+import { ArgumentsMap, mapArguments } from "@/commandsMapper/argumentsMapper";
+import { ArgDefinitionMetadata, COMMAND_ARGS } from "@/decorators/controller/command/arg";
+import { DefaultArgumentsParser } from "@/interfaces/argumentsParser";
 
 export type CommandDeclaration = {
-    handler: (ctx: CommandContext) => void | Promise<void>;
+    handler: (ctx: CommandContext, ...args: string[]) => void | Promise<void>;
     handleSyntax: CommandHandleSyntax;
+    argumentsMap: ArgumentsMap;
 };
 
 export enum CommandHandleSyntax {
@@ -74,28 +79,55 @@ export class CommandsMapper {
                 throw new Error("Function not implemented.");
             }
         };
+
+        const inlineHandler = async () => {
+            const args = new DefaultArgumentsParser().parse(
+                (message.text ?? "").split(" ").slice(1).join(" "),
+                command.argumentsMap
+            );
+            if (args.length != command.argumentsMap.length) throw new Error("Wrong arguments");
+            await command.handler(ctx, ...args.map(v => v.value));
+        };
+
         try {
-            await command.handler(ctx);
+            await inlineHandler();
         } catch (err) {
             if (err instanceof ReplyWithError) await ctx.reply(err.text);
             else throw err;
         }
     }
 
-    public mapModule(module: DependencyTreeNode) {
-        module.controllers.map(v => {
-            const commands = (Reflect.getOwnMetadata(CONTROLLER_COMMANDS, v) ?? []) as ControllerCommandsMetadata[];
-            commands.map(cmd => {
-                if (this.mapping.has(cmd.trigger)) {
-                    throw new Error(
-                        `Command /${cmd.trigger} is defined multiply times (${chalk.green(v.name)}, ${chalk.green((Reflect.getOwnMetadata(COMMAND_DEFINITOR_CONTROLLER, this.mapping.get(cmd.trigger)!.handler) as Class).name)})`
-                    );
-                }
-                // TODO: add RegExp testing
-                this.mapping.set(cmd.trigger, { handler: cmd.fn, handleSyntax: CommandHandleSyntax.both });
-                this.logger.log("CommandMapper", `Mapped command /${cmd.trigger}`);
+    public mapController(controller: Class) {
+        if (!isControllerClass(controller))
+            throw new Error(
+                `Controller class must be decorated with @Controller() (caused by ${chalk.green(controller.name)})`
+            );
+        const commands = (Reflect.getOwnMetadata(CONTROLLER_COMMANDS, controller) ??
+            []) as ControllerCommandsMetadata[];
+        commands.map(cmd => {
+            if (this.mapping.has(cmd.trigger)) {
+                throw new Error(
+                    `Command /${cmd.trigger} is defined multiply times (${chalk.green(controller.name)}, ${chalk.green((Reflect.getOwnMetadata(COMMAND_DEFINITOR_CONTROLLER, this.mapping.get(cmd.trigger)!.handler) as Class).name)})`
+                );
+            }
+
+            const commandArgs = (Reflect.getOwnMetadata(COMMAND_ARGS, cmd.fn) ?? []) as ArgDefinitionMetadata[];
+
+            // TODO: add RegExp testing
+            this.mapping.set(cmd.trigger, {
+                handler: cmd.fn,
+                handleSyntax: CommandHandleSyntax.both,
+                argumentsMap: mapArguments(commandArgs)
             });
+            this.logger.log(
+                "CommandMapper",
+                `Mapped command /${cmd.trigger} ${commandArgs.map(v => `{${v.argIndex}}`).join(" ")}`
+            );
         });
+    }
+
+    public mapModule(module: DependencyTreeNode) {
+        module.controllers.map(v => this.mapController(v));
         module.children.map(v => this.mapModule(v));
     }
 }

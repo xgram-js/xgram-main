@@ -1,5 +1,6 @@
 import { Class } from "@/types/class";
 import { CONTROLLER_COMMANDS, ControllerCommandsMetadata } from "@/decorators/controller/command";
+import { ArgDefinitionMetadata, COMMAND_ARGS } from "@/decorators/controller/command/arg";
 
 export interface ControllerMetadata {}
 
@@ -10,7 +11,12 @@ export default function Controller(metadata?: ControllerMetadata) {
     return (target: Class) => {
         Reflect.defineMetadata(CONTROLLER_METADATA, metadata, target);
 
-        const commands = (Reflect.getOwnMetadata(CONTROLLER_COMMANDS, target) ?? []) as ControllerCommandsMetadata[]; // for later use
+        const commands = (Reflect.getOwnMetadata(CONTROLLER_COMMANDS, target) ?? []) as ControllerCommandsMetadata[];
+        commands.forEach(cmd => {
+            const args = (Reflect.getOwnMetadata(COMMAND_ARGS, cmd.fn) ?? []) as ArgDefinitionMetadata[];
+            args.sort((a, b) => a.argIndex - b.argIndex);
+            Reflect.defineMetadata(COMMAND_ARGS, args, cmd.fn);
+        });
     };
 }
 

@@ -2,12 +2,11 @@ import { Class } from "@/types/class";
 import { Message } from "typescript-telegram-bot-api";
 import { BaseContext } from "@/types/context";
 import chalk from "chalk";
-
 export const COMMAND_DEFINITOR_CONTROLLER = Symbol("command:definitor_controller");
 export const CONTROLLER_COMMANDS = Symbol("controller:commands");
 export type ControllerCommandsMetadata = {
     trigger: string | RegExp;
-    fn: (ctx: CommandContext) => void | Promise<void>;
+    fn: (ctx: CommandContext, ...args: any[]) => void | Promise<void>;
 };
 
 export default function Command(trigger: string | RegExp): MethodDecorator {

@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { Injectable } from "@xgram/di";
 
 export interface LoggerLike {
     debug(context: string, ...args: any[]): void;
@@ -18,6 +19,7 @@ export interface ConsoleLoggerOptions {
     prefix: string;
 }
 
+@Injectable()
 export class ConsoleLogger implements LoggerLike {
     public constructor(private readonly options: ConsoleLoggerOptions) {}
 

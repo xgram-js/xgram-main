@@ -1,11 +1,12 @@
 import { buildDependencyTree, buildModuleImportTree, isModuleClass } from "@/decorators/module";
-import { Class } from "@/types/class";
+import { Class, getClassOfInstance } from "@/types/class";
 import Bot from "@/bot";
 import { InstanceStorage } from "@/instanceStorage";
 import chalk from "chalk";
 import { dependencyTreeToString } from "@/utils";
 import { ConsoleLogger, LoggerLike } from "@/logger";
 import { CommandsMapper } from "@/commandsMapper";
+import { Container, isInjectable } from "@xgram/di";
 
 export interface BotFactoryCreateOptions {
     token: string;
@@ -17,7 +18,15 @@ export abstract class BotFactory {
         if (!isModuleClass(rootModule))
             throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(rootModule.name)})`);
 
-        const logger = options.logger ?? new ConsoleLogger({ prefix: "Main" });
+        const container = new Container();
+        let logger: LoggerLike;
+
+        if (options.logger) {
+            const cls = getClassOfInstance(options.logger);
+            if (!isInjectable(cls))
+                throw new Error(`Logger ${cls.name} is not decorated with ${chalk.yellow("@Injectable()")}`);
+            logger = options.logger;
+        } else logger = new ConsoleLogger({ prefix: "Main" });
 
         logger.log("BotFactory", `Building dependency tree for module ${chalk.cyan(rootModule.name)}`);
         const moduleImportTree = buildModuleImportTree(rootModule);
