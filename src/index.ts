@@ -5,6 +5,7 @@ export { default as Controller } from "@/decorators/controller";
 export { default as Provider } from "@/decorators/provider";
 export { default as Command } from "@/decorators/controller/command";
 export { CommandContext } from "@/decorators/controller/command";
-export { default as Arg } from "@/decorators/controller/command/arg";
+export { default as Arg, BaseArgumentType } from "@/decorators/controller/command/arg";
 export { ConsoleLogger, ConsoleLoggerOptions, LoggerLike, LogLevel } from "@/logger";
 export { ReplyWithError } from "@/errors";
+export { ArgumentsParser } from "@/interfaces/argumentsParser";
