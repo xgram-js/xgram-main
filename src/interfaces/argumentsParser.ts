@@ -11,7 +11,7 @@ export interface ArgumentsParser {
 
 export class DefaultArgumentsParser implements ArgumentsParser {
     public parse(argsString: string, map: ArgumentsMap): ArgumentsParsingResult[] {
-        const args = argsString.split(" ");
+        const args = argsString.split(" ").filter(v => v !== ""); // TODO: probably a temporary fix
         if (args.length != map.length) throw new ReplyWithError("Failed to parse arguments.");
 
         const result: ArgumentsParsingResult[] = [];
