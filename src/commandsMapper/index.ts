@@ -9,12 +9,13 @@ import {
 } from "@/decorators/controller/command";
 import { LoggerLike } from "@/logger";
 import chalk from "chalk";
-import { Class } from "@xgram/types";
+import { Class, getClassOfInstance, InstanceOf } from "@xgram/types";
 import { ReplyWithError } from "@/errors";
 import { isControllerClass } from "@/decorators/controller";
 import { ArgumentsMap, mapArguments } from "@/commandsMapper/argumentsMapper";
 import { ArgDefinitionMetadata, COMMAND_ARGS } from "@/decorators/controller/command/arg";
 import { DefaultArgumentsParser } from "@/interfaces/argumentsParser";
+import { InstanceStorage } from "@/instanceStorage";
 
 export type CommandDeclaration = {
     handler: (ctx: CommandContext, ...args: string[]) => void | Promise<void>;
@@ -97,7 +98,8 @@ export class CommandsMapper {
         }
     }
 
-    public mapController(controller: Class) {
+    public mapController(controllerInstance: InstanceOf) {
+        const controller = getClassOfInstance(controllerInstance);
         if (!isControllerClass(controller))
             throw new Error(
                 `Controller class must be decorated with @Controller() (caused by ${chalk.green(controller.name)})`
@@ -115,7 +117,7 @@ export class CommandsMapper {
 
             // TODO: add RegExp testing
             this.mapping.set(cmd.trigger, {
-                handler: cmd.fn,
+                handler: cmd.fn.bind(controllerInstance),
                 handleSyntax: CommandHandleSyntax.both,
                 argumentsMap: mapArguments(commandArgs)
             });
@@ -126,8 +128,8 @@ export class CommandsMapper {
         });
     }
 
-    public mapModule(module: DependencyTreeNode) {
-        module.controllers.map(v => this.mapController(v));
-        module.children.map(v => this.mapModule(v));
+    public mapModule(instanceStorage: InstanceStorage, module: DependencyTreeNode) {
+        module.controllers.map(v => this.mapController(instanceStorage.getControllerInstance(v, module)));
+        module.children.map(v => this.mapModule(instanceStorage, v));
     }
 }

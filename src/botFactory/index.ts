@@ -37,7 +37,7 @@ export abstract class BotFactory {
         instanceStorage.resolveForModule(rootModule, dependencyTree);
 
         const commandsMapper = new CommandsMapper(logger);
-        commandsMapper.mapModule(dependencyTree);
+        commandsMapper.mapModule(instanceStorage, dependencyTree);
 
         return new Bot(new rootModule(), options.token, options.logger ?? logger, {
             onCommand: (bot, message) => commandsMapper.handleMessage(bot, message)
