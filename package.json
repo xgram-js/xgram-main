@@ -26,7 +26,6 @@
     "eslint": "^9.35.0",
     "globals": "^16.3.0",
     "husky": "^9.1.7",
-    "jiti": "^2.5.1",
     "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
     "prettier-plugin-unused-imports-configurable": "^1.15.0",
@@ -35,10 +34,10 @@
     "typescript-eslint": "^8.42.0"
   },
   "dependencies": {
+    "@xgram/di": "^0.0.6",
     "archy": "^1.0.0",
     "chalk": "^5.6.2",
-    "typescript-telegram-bot-api": "^0.10.0",
-    "@xgram/di": "^0.0.6"
+    "typescript-telegram-bot-api": "^0.10.0"
   },
   "peerDependencies": {
     "reflect-metadata": "^0.2.2"
