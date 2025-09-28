@@ -1,4 +1,4 @@
-import { Class } from "@/types/class";
+import { Class } from "@xgram/types";
 import { CONTROLLER_COMMANDS, ControllerCommandsMetadata } from "@/decorators/controller/command";
 import { ArgDefinitionMetadata, COMMAND_ARGS } from "@/decorators/controller/command/arg";
 

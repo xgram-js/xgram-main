@@ -1,4 +1,4 @@
-import { Class } from "@/types/class";
+import { Class } from "@xgram/types";
 import { Message } from "typescript-telegram-bot-api";
 import { BaseContext } from "@/types/context";
 import chalk from "chalk";

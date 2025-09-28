@@ -1,5 +1,5 @@
 import { buildDependencyTree, buildModuleImportTree, isModuleClass } from "@/decorators/module";
-import { Class, getClassOfInstance } from "@/types/class";
+import { Class, getClassOfInstance } from "@xgram/types";
 import Bot from "@/bot";
 import { InstanceStorage } from "@/instanceStorage";
 import chalk from "chalk";

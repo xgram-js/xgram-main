@@ -1,4 +1,4 @@
-import { Class } from "@/types/class";
+import { Class } from "@xgram/types";
 import { DependencyTreeNode, isModuleClass } from "@/decorators/module";
 import chalk from "chalk";
 import { isProviderClass } from "@/decorators/provider";

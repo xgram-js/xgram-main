@@ -1,4 +1,4 @@
-import { Class, ExtendedAbstractClass, getClassMethods, InstanceOf } from "@/types/class";
+import { Class, ExtendedAbstractClass, getClassMethods, InstanceOf } from "@xgram/types";
 import chalk from "chalk";
 import assert from "node:assert";
 

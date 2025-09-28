@@ -1,4 +1,4 @@
-import { Class } from "@/types/class";
+import { Class } from "@xgram/types";
 
 export interface ProviderMetadata {}
 

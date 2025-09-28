@@ -1,7 +1,7 @@
 import { DependencyTreeNode, ModuleImportTreeNode } from "@/decorators/module";
 import archy from "archy";
 import chalk from "chalk";
-import { Class } from "@/types/class";
+import { Class } from "@xgram/types";
 import { isProviderClass } from "@/decorators/provider";
 
 export function moduleImportTreeToString(tree: ModuleImportTreeNode): string {

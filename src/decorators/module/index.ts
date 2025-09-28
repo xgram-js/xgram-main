@@ -1,4 +1,4 @@
-import { Class } from "@/types/class";
+import { Class } from "@xgram/types";
 import { CONTROLLER_MODULE_DEFINITOR, isControllerClass } from "@/decorators/controller";
 import { isProviderClass } from "@/decorators/provider";
 import chalk from "chalk";

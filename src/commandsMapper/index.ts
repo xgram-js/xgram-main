@@ -9,7 +9,7 @@ import {
 } from "@/decorators/controller/command";
 import { LoggerLike } from "@/logger";
 import chalk from "chalk";
-import { Class } from "@/types/class";
+import { Class } from "@xgram/types";
 import { ReplyWithError } from "@/errors";
 import { isControllerClass } from "@/decorators/controller";
 import { ArgumentsMap, mapArguments } from "@/commandsMapper/argumentsMapper";
