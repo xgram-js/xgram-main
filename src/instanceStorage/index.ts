@@ -4,9 +4,11 @@ import chalk from "chalk";
 import { isProviderClass } from "@/decorators/provider";
 import { type LoggerLike } from "@/logger";
 import { isControllerClass } from "@/decorators/controller";
+import { Injectable, InjectKey } from "@xgram/di";
 
+@Injectable()
 export class InstanceStorage {
-    public constructor(private readonly logger: LoggerLike) {}
+    public constructor(@InjectKey("logger") private readonly logger: LoggerLike) {}
 
     private instances: Map<Class, Map<Class, any>> = new Map();
 

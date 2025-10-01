@@ -16,6 +16,7 @@ import { ArgumentsMap, mapArguments } from "@/commandsMapper/argumentsMapper";
 import { type ArgDefinitionMetadata, COMMAND_ARGS } from "@/decorators/controller/command/arg";
 import { DefaultArgumentsParser } from "@/interfaces/argumentsParser";
 import { InstanceStorage } from "@/instanceStorage";
+import { Injectable, InjectKey } from "@xgram/di";
 
 export type CommandDeclaration = {
     handler: (ctx: CommandContext, ...args: string[]) => void | Promise<void>;
@@ -29,8 +30,9 @@ export enum CommandHandleSyntax {
     both
 }
 
+@Injectable()
 export class CommandsMapper {
-    public constructor(private readonly logger: LoggerLike) {}
+    public constructor(@InjectKey("logger") private readonly logger: LoggerLike) {}
 
     private readonly mapping: Map<string | RegExp, CommandDeclaration> = new Map();
 
