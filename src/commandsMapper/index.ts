@@ -7,13 +7,13 @@ import {
     CONTROLLER_COMMANDS,
     ControllerCommandsMetadata
 } from "@/decorators/controller/command";
-import { LoggerLike } from "@/logger";
+import { type LoggerLike } from "@/logger";
 import chalk from "chalk";
 import { Class, getClassOfInstance, InstanceOf } from "@xgram/types";
 import { ReplyWithError } from "@/errors";
 import { isControllerClass } from "@/decorators/controller";
 import { ArgumentsMap, mapArguments } from "@/commandsMapper/argumentsMapper";
-import { ArgDefinitionMetadata, COMMAND_ARGS } from "@/decorators/controller/command/arg";
+import { type ArgDefinitionMetadata, COMMAND_ARGS } from "@/decorators/controller/command/arg";
 import { DefaultArgumentsParser } from "@/interfaces/argumentsParser";
 import { InstanceStorage } from "@/instanceStorage";
 

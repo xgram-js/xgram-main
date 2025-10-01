@@ -2,7 +2,7 @@ import { Class } from "@xgram/types";
 import { DependencyTreeNode, isModuleClass } from "@/decorators/module";
 import chalk from "chalk";
 import { isProviderClass } from "@/decorators/provider";
-import { LoggerLike } from "@/logger";
+import { type LoggerLike } from "@/logger";
 import { isControllerClass } from "@/decorators/controller";
 
 export class InstanceStorage {
