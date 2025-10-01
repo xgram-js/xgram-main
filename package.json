@@ -34,7 +34,7 @@
     "typescript-eslint": "^8.42.0"
   },
   "dependencies": {
-    "@xgram/di": "^0.0.6",
+    "@xgram/di": "^0.0.7",
     "@xgram/types": "^0.0.1",
     "archy": "^1.0.0",
     "chalk": "^5.6.2",
