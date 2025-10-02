@@ -1,4 +1,4 @@
-import { Class } from "@xgram/types";
+import { Class, InstanceOf } from "@xgram/types";
 import { DependencyTreeNode, isModuleClass } from "@/decorators/module";
 import chalk from "chalk";
 import { isProviderClass } from "@/decorators/provider";
@@ -10,10 +10,10 @@ import { Injectable, InjectKey } from "@xgram/di";
 export class InstanceStorage {
     public constructor(@InjectKey("logger") private readonly logger: LoggerLike) {}
 
-    private instances: Map<Class, Map<Class, any>> = new Map();
+    private instances: Map<Class, Map<Class, InstanceOf>> = new Map();
 
     // TODO: merge getProviderInstance and getControllerInstance into one method or optimise getControllerInstance
-    public getProviderInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): any {
+    public getProviderInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): InstanceOf {
         const scope = dependencyTree.thisModule;
         if (!isModuleClass(scope))
             throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(scope.name)})`);
@@ -22,7 +22,7 @@ export class InstanceStorage {
                 `Provider class must be decorated with @Provider() (caused by ${chalk.yellow(of.name)} imported from ${chalk.cyan(scope.name)})`
             );
 
-        const moduleScope: Map<Class, any> = this.instances.get(scope) ?? new Map();
+        const moduleScope: Map<Class, InstanceOf> = this.instances.get(scope) ?? new Map();
         if (moduleScope.has(of)) {
             return moduleScope.get(of);
         }
@@ -75,7 +75,7 @@ export class InstanceStorage {
         return instance;
     }
 
-    public getControllerInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): any {
+    public getControllerInstance(of: Class, dependencyTree: DependencyTreeNode, resolved: Class[] = []): InstanceOf {
         const scope = dependencyTree.thisModule;
         if (!isModuleClass(scope))
             throw new Error(`Module class must be decorated with @Module() (caused by ${chalk.cyan(scope.name)})`);
@@ -84,7 +84,7 @@ export class InstanceStorage {
                 `Controller class must be decorated with @Controller() (caused by ${chalk.green(of.name)} imported from ${chalk.cyan(scope.name)})`
             );
 
-        const moduleScope: Map<Class, any> = this.instances.get(scope) ?? new Map();
+        const moduleScope: Map<Class, InstanceOf> = this.instances.get(scope) ?? new Map();
         if (moduleScope.has(of)) {
             return moduleScope.get(of);
         }
